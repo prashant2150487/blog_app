@@ -4,21 +4,38 @@ import googleIcon from "../imgs/google.png";
 import { Link } from "react-router-dom";
 import AnimationWrapper from "../common/page-animation";
 import toast, { Toaster } from "react-hot-toast";
+import axios from "axios"
+import { storeInsession } from "../common/session";
 
-let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for email
-let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for password
+
+
 
 const UserAuthForm = ({ type }) => {
-  const authForm = useRef();
+
+  const userAuthThroughServer = (serverRoute, formData) => {
+    axios.post(import.meta.env.VITE_SERVER_DOMAIN + serverRoute, formData)
+      .then(({ data }) => {
+        storeInsession("user", JSON.stringify(data));
+        console.log(sessionStorage)
+      })
+      .catch(({ response }) => {
+        toast.error(response.data.error)
+      })
+  }
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    let form = new FormData(authForm.current);
+    let serverRoute = type == "sign-in" ? "/signin" : "/signup";
+
+
+    let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
+
+    let form = new FormData(formElement);
     let formData = {};
     for (let [key, value] of form.entries()) {
       formData[key] = value;
     }
-    console.log(formData);
     let { fullname, email, password } = formData;
     if (fullname) {
       if (fullname.length < 3) {
@@ -37,13 +54,15 @@ const UserAuthForm = ({ type }) => {
         "Password should be atleast 6 character long and should contain atleast one uppercase, one lowercase and one digit"
       );
     }
+    userAuthThroughServer(serverRoute, formData)
+
   };
 
   return (
     <AnimationWrapper keyValue={type}>
       <section className=" flex items-center justify-center h-cover">
         <Toaster />
-        <form ref={authForm} className="w-[80%] max-w-[400px]">
+        <form id="formElement" className="w-[80%] max-w-[400px]">
           <h1 className="text-4xl font-gelasio capitalize text-center mb-24">
             {type == "sign-in" ? "wellcome back" : "Join us today"}
           </h1>

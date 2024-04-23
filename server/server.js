@@ -5,10 +5,10 @@ import bcrypt from "bcrypt";
 import User from "./Schema/User.js";
 import { nanoid } from "nanoid"
 import jwt from "jsonwebtoken"
-
-
+import cors from "cors"
 
 const server = express();
+server.use(cors())
 let PORT = 3000;
 let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for email
 let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for password
@@ -69,10 +69,10 @@ server.post("/signup", (req, res) => {
         user.save().then((u) => {
             return res.status(200).json(formatDatattoSend(u));
         }).catch((err) => {
-            if (err.code == 1100) {
+            if (err.code == 11000) {
                 return res.status(403).json({ "error": "Email already exists" })
             }
-            return res.status(500).send({ error: err.message });
+            return res.status(500).json({ error: err.message });
         });
     });
 });
