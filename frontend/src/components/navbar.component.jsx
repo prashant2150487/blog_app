@@ -1,8 +1,10 @@
-import React, { useState } from 'react'
+import React, { useContext, useState } from 'react'
 import { Link, Outlet } from 'react-router-dom'
 import logo from "../imgs/logo.png"
+import { UserContext } from '../App'
 const Navbar = () => {
     const [searchBoxVisibility, setSearchBoxVisibility] = useState(false)
+    const { userAuth, setUserAuth } = useContext(UserContext)
     return (
         <>
             <nav className='navbar '>
