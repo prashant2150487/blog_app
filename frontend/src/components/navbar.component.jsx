@@ -11,7 +11,7 @@ const Navbar = () => {
         setTimeout(() => {
             setUserNavPanel(false)
 
-        },200)
+        }, 200)
     }
 
     return (
@@ -58,7 +58,6 @@ const Navbar = () => {
                     ) : (
                         <>
                             <Link to="/editer" className="hidden md:flex gap-2 link">
-                                {" "}
                                 <i className="fi fi-rr-file-edit" /> <p>Write</p>
                             </Link>
                             <Link className="btn-dark py-2" to="/signin">

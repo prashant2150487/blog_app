@@ -6,21 +6,36 @@ import User from "./Schema/User.js";
 import { nanoid } from "nanoid"
 import jwt from "jsonwebtoken"
 import cors from "cors"
+import aws from "aws-sdk"
+// import admin from 'firebase-admin';
+// import { getAuth } from 'firebase/auth';
+// import serviceAccountKey from "./react-js-blog-website-yt-ae07c-firebase-adminsdk-2kmhl-3812b71491.json"  assert {type: 'json'};
 
 const server = express();
-server.use(cors(
-    {
-        "origin": "*",
-        "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
-        "preflightContinue": false,
-        "optionsSuccessStatus": 204
-    }
-))
+
 let PORT = 3000;
+
+server.use(cors(
+    // {
+    //     "origin": "*",
+    //     "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
+    //     "preflightContinue": false,
+    //     "optionsSuccessStatus": 204
+    // }
+))
+// admin.initializeApp({
+//     credential: admin.credential.cert(serviceAccountKey)
+// });
 let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for email
 let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for password
 server.use(express.json());
 mongoose.connect(process.env.DB_LOCATION, { autoIndex: true });
+const s3 = new aws.S3({
+    region: 'eu-north-1',
+    acessKeyId: process.env.AWS_ACCESS_KEY,
+    secretAcessKey: process.env.AWS_SECRET_ACCESS_KEY
+
+})
 
 
 
@@ -108,6 +123,46 @@ server.post("/signin", async (req, res) => {
 
 })
 
+// server.post('/google-auth', async (req, res) => {
+//     const { access_token } = req.body;
+//     getAuth.verifyIdToken(access_token)
+//         .then(async (decodeUser) => {
+//             let { email, name, picture } = decodeUser;
+//             picture = picture.replace("s96-c", "s384-c");
+
+//             let user = await User.findOne({ "personal_info.email": email }).select("personal_info.fullname personal_info.username personal_info.profile_img google_auth")
+//                 .then((u) => {
+//                     return u || null
+//                 })
+//                 .catch(err => {
+//                     return res.status(500).json({ "error": err.message })
+//                 })
+//             if (user) {
+//                 if (!user.google_auth) {
+//                     return res.status(403).json({ "error": "This email was signed up without google. Please log in with password to access the account" })
+//                 }
+
+//             } else {
+//                 let username = await generateUsername(email);
+//                 user = new User({
+//                     personal_info: { fullname: name, email, profile_img: picture, username }, google_auth: true
+//                 })
+//                 await user.save()
+//                     .then((u) => {
+//                         user = u;
+//                     })
+//                     .catch(err => {
+//                         return res.status(500).json({ "error": err.message })
+//                     })
+//             }
+//             return res.status(200).json(formatDatattoSend(user))
+//         })
+//         .catch(err => {
+//             return res.status(500).json({ "error": "Failed to authenticate you with google.Try with some other google account" })
+//         })
+
+
+// })
 server.listen(PORT, () => {
     console.log(`server is listining on port -> ${PORT}`);
 });

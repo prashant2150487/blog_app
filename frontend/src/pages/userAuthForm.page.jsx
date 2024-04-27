@@ -7,6 +7,7 @@ import toast, { Toaster } from "react-hot-toast";
 import axios from "axios"
 import { storeInsession } from "../common/session";
 import { UserContext } from "../App";
+import { authWithGoogle } from "../common/firebase";
 
 
 
@@ -14,12 +15,12 @@ import { UserContext } from "../App";
 const UserAuthForm = ({ type }) => {
 
   let { userAuth: { access_token }, setUserAuth } = useContext(UserContext)
+
   const userAuthThroughServer = (serverRoute, formData) => {
     axios.post(import.meta.env.VITE_SERVER_DOMAIN + serverRoute, formData)
       .then(({ data }) => {
         storeInsession("user", JSON.stringify(data));
         setUserAuth(data)
-        console.log(sessionStorage)
       })
       .catch(({ response }) => {
         toast.error(response.data.error)
@@ -60,7 +61,22 @@ const UserAuthForm = ({ type }) => {
     userAuthThroughServer(serverRoute, formData)
 
   };
-
+  const handleGoogleAuth = (e) => {
+    e.preventDefault();
+    authWithGoogle()
+      .then((user) => {
+        // console.log(user)
+        let serverRoute = "/google-auth";
+        let formData = {
+          access_token: user.acessToken
+        }
+        userAuthThroughServer(serverRoute, formData)
+      })
+      .catch(err => {
+        toast.error('trouble login through google');
+        return console.log(err);
+      })
+  }
   return (
     access_token ? <Navigate to="/" /> :
       <AnimationWrapper keyValue={type}>
@@ -119,7 +135,7 @@ const UserAuthForm = ({ type }) => {
               <p>or</p>
               <hr className="w-1/2 border-black" />
             </div>
-            <button className="btn-dark flex items-center gap-4 justify-center w-[90%] center ">
+            <button onClick={handleGoogleAuth} className="btn-dark flex items-center gap-4 justify-center w-[90%] center ">
               <img src={googleIcon} className="w-5" />
               continue with google
             </button>

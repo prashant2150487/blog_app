@@ -11,4 +11,4 @@ const removeFromSession = (key) => {
 const logOutUser = () => {
     sessionStorage.clear();
 }
-export {storeInsession,lookInSession,removeFromSession,logOutUser}
+export { storeInsession, lookInSession, removeFromSession, logOutUser }
