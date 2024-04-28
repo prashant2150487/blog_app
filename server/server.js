@@ -15,14 +15,7 @@ const server = express();
 
 let PORT = 3000;
 
-server.use(cors(
-    // {
-    //     "origin": "*",
-    //     "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
-    //     "preflightContinue": false,
-    //     "optionsSuccessStatus": 204
-    // }
-))
+server.use(cors())
 // admin.initializeApp({
 //     credential: admin.credential.cert(serviceAccountKey)
 // });
@@ -30,13 +23,40 @@ let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for e
 let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for password
 server.use(express.json());
 mongoose.connect(process.env.DB_LOCATION, { autoIndex: true });
+
 const s3 = new aws.S3({
     region: 'eu-north-1',
-    acessKeyId: process.env.AWS_ACCESS_KEY,
-    secretAcessKey: process.env.AWS_SECRET_ACCESS_KEY
-
+    accessKeyId: process.env.AWS_ACCESS_KEY,
+    secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 })
 
+const generateUploadURL = async () => {
+    const date = new Date();
+    const imageName = `${nanoid()}-${date.getTime()}.jpeg`;
+    console.log(imageName)
+    return await s3.getSignedUrlPromise('putObject', {
+        Bucket: 'blogging-website-yt04',
+        Key: imageName,
+        Expires: 1000,
+        ContentType: "image/jpeg"
+    })
+}
+// const generateUploadURL = async () => {
+//     try {
+//         const date = new Date();
+//         const imageName = `${nanoid()}-${date.getTime()}.jpeg`;
+//         console.log(imageName);
+//         const url = await s3.getSignedUrlPromise('putObject', {
+//             Bucket: 'blogging-website-yt04',
+//             Key: imageName,
+//             Expires: 1000,
+//             ContentType: "image/jpeg"
+//         });
+//         return url;
+//     } catch (err) {
+//         throw new Error(err.message);
+//     }
+// };
 
 
 const formatDatattoSend = (user) => {
@@ -49,6 +69,9 @@ const formatDatattoSend = (user) => {
 
     }
 }
+
+
+
 const generateUsername = async (email) => {
     let username = email.split('@')[0];
     let isUsernameNotUnique = await User.exists({ "personal_info.username": username }).then((result) => result)
@@ -59,6 +82,15 @@ const generateUsername = async (email) => {
 
 }
 
+
+server.get('/get-upload-url', (req, res) => {
+    generateUploadURL()
+        .then(url = res.status(200).json({ uploadURL: url }))
+        .catch(err => {
+            console.log(err.message);
+            return res.status(500).json({ error: err.message })
+        })
+})
 server.post("/signup", (req, res) => {
     const { fullname, email, password } = req.body;
     if (fullname.length < 3) {
