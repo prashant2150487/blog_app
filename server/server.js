@@ -195,6 +195,9 @@ server.post("/signin", async (req, res) => {
 
 
 // })
+server.post('/', (req, res) => {
+    return res.send("hello word");
+})
 server.listen(PORT, () => {
     console.log(`server is listining on port -> ${PORT}`);
 });
