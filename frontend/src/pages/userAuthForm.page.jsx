@@ -68,7 +68,7 @@ const UserAuthForm = ({ type }) => {
         // console.log(user)
         let serverRoute = "/google-auth";
         let formData = {
-          access_token: user.acessToken
+          access_token: user.accessToken
         }
         userAuthThroughServer(serverRoute, formData)
       })
