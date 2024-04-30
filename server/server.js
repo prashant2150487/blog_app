@@ -15,9 +15,18 @@ const server = express();
 let PORT = 3000;
 
 server.use(cors())
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccountKey)
-});
+// admin.initializeApp({
+//     credential: admin.credential.cert(serviceAccountKey)
+// });
+
+
+try {
+    admin.initializeApp({
+        credential: admin.credential.cert(serviceAccountKey)
+    });
+} catch (err) {
+    console.error("Firebase admin initialization error:", err);
+}
 let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for email
 let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for password
 server.use(express.json());
@@ -29,33 +38,19 @@ const s3 = new aws.S3({
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY
 })
 
+
 const generateUploadURL = async () => {
     const date = new Date();
     const imageName = `${nanoid()}-${date.getTime()}.jpeg`;
     console.log(imageName)
     return await s3.getSignedUrlPromise('putObject', {
-        Bucket: 'blogging-website-yt04',
+        Bucket: 'blogging-website-yt1',
         Key: imageName,
         Expires: 1000,
         ContentType: "image/jpeg"
     })
 }
-// const generateUploadURL = async () => {
-//     try {
-//         const date = new Date();
-//         const imageName = `${nanoid()}-${date.getTime()}.jpeg`;
-//         console.log(imageName);
-//         const url = await s3.getSignedUrlPromise('putObject', {
-//             Bucket: 'blogging-website-yt04',
-//             Key: imageName,
-//             Expires: 1000,
-//             ContentType: "image/jpeg"
-//         });
-//         return url;
-//     } catch (err) {
-//         throw new Error(err.message);
-//     }
-// };
+
 
 
 const formatDatattoSend = (user) => {
@@ -84,7 +79,7 @@ const generateUsername = async (email) => {
 
 server.get('/get-upload-url', (req, res) => {
     generateUploadURL()
-        .then(url = res.status(200).json({ uploadURL: url }))
+        .then(url => res.status(200).json({ uploadURL: url }))
         .catch(err => {
             console.log(err.message);
             return res.status(500).json({ error: err.message })
@@ -222,17 +217,17 @@ server.post("/google-auth", async (req, res) => {
     }
 });
 
-// try {
-//     admin.initializeApp({
-//         credential: admin.credential.cert(serviceAccountKey)
-//     });
-// } catch (err) {
-//     console.error("Firebase admin initialization error:", err);
-// }
 
 server.post('/', (req, res) => {
     return res.send("hello word");
 })
+
+
+if (s3.config.credentials) {
+    console.log('AWS is connected');
+} else {
+    console.log('AWS is not connected');
+}
 server.listen(PORT, () => {
     console.log(`server is listining on port -> ${PORT}`);
 });
