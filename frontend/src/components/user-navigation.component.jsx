@@ -1,8 +1,8 @@
 import React, { useContext } from 'react'
 import AnimationWrapper from '../common/page-animation'
-import { Link } from 'react-router-dom'
 import { UserContext } from '../App'
 import { logOutUser, removeFromSession } from '../common/session'
+import { Link } from 'react-router-dom'
 
 const UserNavigationPanel = () => {
 
@@ -16,7 +16,7 @@ const UserNavigationPanel = () => {
     return (
         <AnimationWrapper className="absolute right-0 z-50" transition={{ duration: 1.0 }}>
             <div className='absolute right-0 w-60 overflow-hidden duration-200 boder mt-5 bg-white shadow'>
-                <Link to='/editor' className='flex gap-2 link md:hidden'>
+                <Link to="/editor" className='flex gap-2 link md:hidden'>
                     <i className='fi fi-rr-file-edit' />
                     <p>Write</p>
                 </Link>

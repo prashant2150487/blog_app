@@ -1,13 +1,14 @@
-import React, { useRef } from 'react'
+import React, { useContext, useRef } from 'react'
 import { Link } from 'react-router-dom'
 import logo from "../imgs/logo.png"
 import AnimationWrapper from '../common/page-animation'
 import defaultBanner from "../imgs/blog banner.png"
 import { uploadImage } from '../common/aws'
 import toast, { Toaster } from 'react-hot-toast'
-import { KeyCode } from 'monaco-editor'
+import { EditorContext } from '../pages/editor.pages'
 function BlogEditor() {
     let blogBannerRef = useRef();
+    const { blog, blog: { title, banner, content, tags, des }, setBlog } = useContext(EditorContext)
     const handleBannerUpload = (e) => {
         let img = e.target.files[0];
         if (img) {
@@ -16,7 +17,7 @@ function BlogEditor() {
                 .then((url) => {
                     if (url) {
                         toast.dismiss(loadingToast);
-                        toast.success("Uploaded ");
+                        toast.success("Uploaded");
                         blogBannerRef.current.src = url
                     }
                 }).catch(err => {
@@ -24,7 +25,6 @@ function BlogEditor() {
                     return toast.error(err);
                 })
         }
-        console.log(img)
     }
     const handleTitleKeyDown = (e) => {
         if (e.keyCode === 13) { // Fixed typo here: should be e.keyCode instead of e.KeyCodeeyCode
@@ -32,10 +32,13 @@ function BlogEditor() {
         }
     };
 
-    const handleChange = (e) => { // Added 'e' as a parameter to the handleChange function to access the event object
+    const handleTitleChange = (e) => { // Added 'e' as a parameter to the handleChange function to access the event object
         let input = e.target;
         input.style.height = 'auto';
         input.style.height = input.scrollHeight + "px";
+        setBlog({ ...blog, title: input.value })
+        console.log(title)
+
     };
 
     return (
@@ -44,7 +47,7 @@ function BlogEditor() {
                 <Link to="/" className='flex-none w-10'>
                     <img src={logo} alt='logos' />
                 </Link>
-                <p className='max-md:hidden text-black line-clamp-1 w-full'>New Blog</p>
+                <p className='max-md:hidden text-black line-clamp-1 w-full'>{title}</p>
                 <div className='ml-auto gap-4 flex' >
                     <button className='btn-dark py-2'>Publish</button>
                     <button className='btn-light py-2'>Save draft</button>
@@ -61,7 +64,7 @@ function BlogEditor() {
                             </label>
                         </div>
                     </div>
-                    <textarea placeholder='Blog Title' className='text-4xl w-full font-medium h-20 outline-none mt-10 resize-none placeholder:opacity-40' onKeyDown={handleTitleKeyDown} onChange={handleChange}>
+                    <textarea placeholder='Blog Title' className='text-4xl w-full font-medium h-20 outline-none mt-10 resize-none placeholder:opacity-40' onKeyDown={handleTitleKeyDown} onChange={handleTitleChange}>
 
                     </textarea>
                 </section>

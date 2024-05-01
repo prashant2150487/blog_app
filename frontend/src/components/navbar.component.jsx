@@ -17,8 +17,8 @@ const Navbar = () => {
     return (
         <>
             <nav className="navbar ">
-                <Link className="w-10 flex-none">
-                    <img to="/" src={logo} alt="logo" className="w-full" />
+                <Link to="/" className="w-10 flex-none">
+                    <img  src={logo} alt="logo" className="w-full" />
                 </Link>
                 <div
                     className={`absolute w-full bg-white left-0 top-full mt-0.5 border-grey py-4 px-[4vw] md-border-0 md:block md:relative md:inset-0 md:p-0 md:w-auto md:show first-line:" + ${searchBoxVisibility ? "show" : "hide"
@@ -57,7 +57,7 @@ const Navbar = () => {
                         </>
                     ) : (
                         <>
-                            <Link to="/editer" className="hidden md:flex gap-2 link">
+                            <Link to="/editor" className="hidden md:flex gap-2 link">
                                 <i className="fi fi-rr-file-edit" /> <p>Write</p>
                             </Link>
                             <Link className="btn-dark py-2" to="/signin">
