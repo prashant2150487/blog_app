@@ -5,6 +5,7 @@ import AnimationWrapper from '../common/page-animation'
 import defaultBanner from "../imgs/blog banner.png"
 import { uploadImage } from '../common/aws'
 import toast, { Toaster } from 'react-hot-toast'
+import { KeyCode } from 'monaco-editor'
 function BlogEditor() {
     let blogBannerRef = useRef();
     const handleBannerUpload = (e) => {
@@ -25,6 +26,18 @@ function BlogEditor() {
         }
         console.log(img)
     }
+    const handleTitleKeyDown = (e) => {
+        if (e.keyCode === 13) { // Fixed typo here: should be e.keyCode instead of e.KeyCodeeyCode
+            e.preventDefault();
+        }
+    };
+
+    const handleChange = (e) => { // Added 'e' as a parameter to the handleChange function to access the event object
+        let input = e.target;
+        input.style.height = 'auto';
+        input.style.height = input.scrollHeight + "px";
+    };
+
     return (
         <>
             <nav className='navbar'>
@@ -45,12 +58,14 @@ function BlogEditor() {
                             <label htmlFor='uploadBanner'>
                                 <img src={defaultBanner} className='z-20' ref={blogBannerRef} alt="Banner" />
                                 <input type='file' id='uploadBanner' accept='.png,.jpg,.jpeg' hidden onChange={handleBannerUpload} />
-                                {/* <img src={defaultBanner} className='z-20' ref={blogBannerRef} />
-                                <input type='file' id='uploadBanner' accept='.png .jpg .jpeg' hidden onChange={handleBannerUpload} /> */}
                             </label>
                         </div>
                     </div>
+                    <textarea placeholder='Blog Title' className='text-4xl w-full font-medium h-20 outline-none mt-10 resize-none placeholder:opacity-40' onKeyDown={handleTitleKeyDown} onChange={handleChange}>
+
+                    </textarea>
                 </section>
+
             </AnimationWrapper>
         </>
 
