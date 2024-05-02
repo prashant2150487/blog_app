@@ -3,10 +3,10 @@ import mongoose from "mongoose";
 import "dotenv/config";
 import bcrypt from "bcrypt";
 import User from "./Schema/User.js";
-import { nanoid } from "nanoid"
-import jwt from "jsonwebtoken"
-import cors from "cors"
-import aws from "aws-sdk"
+import { nanoid } from "nanoid";
+import jwt from "jsonwebtoken";
+import cors from "cors";
+import aws from "aws-sdk";
 import admin from 'firebase-admin';
 import { getAuth } from 'firebase-admin/auth';
 import serviceAccountKey from "./react-js-blog-website-yt-ae07c-firebase-adminsdk-2kmhl-3812b71491.json"  assert {type: 'json'};
@@ -15,10 +15,7 @@ const server = express();
 let PORT = 3000;
 
 server.use(cors())
-// admin.initializeApp({
-//     credential: admin.credential.cert(serviceAccountKey)
-// });
-
+server.use(express.json());
 
 try {
     admin.initializeApp({
@@ -29,7 +26,6 @@ try {
 }
 let emailRegex = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/; // regex for email
 let passwordRegex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/; // regex for password
-server.use(express.json());
 mongoose.connect(process.env.DB_LOCATION, { autoIndex: true });
 
 const s3 = new aws.S3({
