@@ -1,4 +1,4 @@
-import React, { useContext } from 'react'
+import React, { useContext, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import logo from "../imgs/logo.png"
 import AnimationWrapper from '../common/page-animation'
@@ -6,9 +6,20 @@ import defaultBanner from "../imgs/blog banner.png"
 import { uploadImage } from '../common/aws'
 import toast, { Toaster } from 'react-hot-toast'
 import { EditorContext } from '../pages/editor.pages'
+import EditorJS from '@editorjs/editorjs';
+import { tools } from "./tools.component";
+
 function BlogEditor() {
     const { blog, blog: { title, banner }, setBlog } = useContext(EditorContext);
     console.log(blog.title, banner)
+    useEffect(() => {
+        let editor = new EditorJS({
+            holder: "textEditor",
+            data: '',
+            tools: tools,
+            placeholder: "Let's write a awesome story"
+        });
+    }, [])
     const handleBannerUpload = (e) => {
         let img = e.target.files[0];
         if (img) {
@@ -76,7 +87,7 @@ function BlogEditor() {
 
                     </textarea>
                     <hr className="w-full opacity-10 my-5" />
-                    <div id="textEdiotor"></div>
+                    <div className="font-gelasio" id="textEditor"></div>
                 </section>
 
             </AnimationWrapper>

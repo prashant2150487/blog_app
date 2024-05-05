@@ -47,8 +47,6 @@ const generateUploadURL = async () => {
     })
 }
 
-
-
 const formatDatattoSend = (user) => {
     const access_token = jwt.sign({ id: user._id }, process.env.SECRET_ACCESS_KEY)
     return {
@@ -59,8 +57,6 @@ const formatDatattoSend = (user) => {
 
     }
 }
-
-
 
 const generateUsername = async (email) => {
     let username = email.split('@')[0];
