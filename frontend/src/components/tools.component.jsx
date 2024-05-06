@@ -17,7 +17,7 @@ export const tools = {
     header: {
         class: Header,
         config: {
-            placeholder: 'Type Heading...',
+            placeholder: 'Type Heading....',
             levels: [2, 3],
             defaultLavel: 2
 
