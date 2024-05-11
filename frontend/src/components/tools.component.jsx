@@ -23,7 +23,11 @@ export const tools = {
 
         }
     },
-    quote: Quote,
+    quote: {
+        class: Quote,
+        inlineToolBar: true
+
+    },
     marker: Marker,
     inlineCode: InlineCode,
 }
